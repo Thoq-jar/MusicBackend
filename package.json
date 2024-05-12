@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "backend": "cls && npm install && cls && node index.js"
+    "backend": "clear && npm install && clear && node index.js"
   },
   "author": "Tristan",
   "license": "ISC",
