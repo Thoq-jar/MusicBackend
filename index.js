@@ -25,11 +25,32 @@ console.log("RAM: " + Math.round(os.totalmem() / 1024 / 1024) + " MB");
 console.log("----------------------------------------------------");
 console.log(" ");
 
-app.use(cors({
-    origin: 'http://localhost:11111',
-    methods: ['GET'],
+const allowedOrigins = [
+  'http://localhost:11111',
+  'http://0.0.0.0:11111',
+  'http://192.168.1.18:11111',
+  'http://192.168.1.18:3000',
+  'http://0.0.0.0:3000',
+  'http://localhost:3000'
+];
+
+const corsOptionsDelegate = function (req, callback) {
+  const corsOptions = {
+    origin: function (origin, callback) {
+      if (allowedOrigins.indexOf(origin)!== -1 ||!origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ["GET", "PUT", "POST", "DELETE", "HEAD", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
-}));
+  };
+  callback(null, corsOptions);
+};
+
+app.use(cors(corsOptionsDelegate));
 
 app.get('/songs/:filename', (req, res) => {
     res.sendFile(path.join(__dirname, req.params.filename));
